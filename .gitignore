@@ -1,0 +1,7 @@
+# The final .desktop entry is generated from the template at install time (absolute paths)
+src/*.desktop
+!src/*.desktop.template
+
+*.swp
+*~
+.DS_Store

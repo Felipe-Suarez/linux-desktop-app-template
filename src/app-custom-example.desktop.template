@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=App Custom Example
+Comment=Reference application demonstrating the dialog capabilities available to a desktop launcher
+Exec=__EXEC_PATH__
+Icon=system-run
+Terminal=true
+Categories=Development;
+Keywords=template;example;zenity;desktop;launcher;
