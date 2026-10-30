@@ -39,6 +39,28 @@ Example**.
 
 Requires `zenity`. Optionally `libnotify-bin` for desktop notifications.
 
+## Application or desktop shortcut
+
+These are two different files, and only one of them makes the launcher an
+application.
+
+| File | What it is | Created by |
+|---|---|---|
+| `~/.local/share/applications/<name>.desktop` | **The application.** Listed in the activities overview and in search, and eligible for pinning to the dock. | `./install.sh`, always |
+| `<desktop>/<name>.desktop` | **A shortcut.** An independent copy for launching from the desktop. Nothing else depends on it. | `./install.sh --desktop`, optionally |
+
+A `.desktop` file that exists only on the desktop is not an application: GNOME
+does not list it in the overview and it cannot be pinned. Deleting the desktop
+copy leaves the application intact.
+
+To pin the application to the dock, open the overview (<kbd>Super</kbd>),
+search for its name, right-click the icon and select **Pin to Dash**. The
+application does not need to be running.
+
+If the script opens a window belonging to another program, such as a browser in
+app mode, that window appears in the dock under the other program's icon unless
+the `.desktop` entry declares its window class. See `docs/guide.md`, section 6.
+
 ## What the installer does
 
 `install.sh` transforms the repository into an installed application:
@@ -106,8 +128,8 @@ Follow docs/guide.md and build an application that <requirement>.
 
 Section 4 covers the procedure. Section 6 documents failure modes that produce
 no error message, including processes that terminate silently when no terminal
-is attached, shell portability constraints on port checks, and dialog markup
-escaping.
+is attached, shell portability constraints on port checks, dialog markup
+escaping, and windows that do not group under their launcher's icon.
 
 ## Scope
 

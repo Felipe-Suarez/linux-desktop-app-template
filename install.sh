@@ -100,5 +100,5 @@ fi
 
 echo
 echo "Done. Open the activities overview and search for: $NAME"
-echo "To pin it: right-click the icon and select Add to Favourites."
+echo "To pin it: right-click the icon and select Pin to Dash."
 echo "Documentation: $REPO_DIR/docs/guide.md"

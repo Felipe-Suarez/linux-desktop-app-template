@@ -45,6 +45,10 @@ entry present only on the desktop will not appear in the overview and cannot be
 pinned. Installation into `~/.local/share/applications/` is therefore the
 default, not an option.
 
+Put differently: the entry in `~/.local/share/applications/` **is** the
+application. The copy on the desktop is only a shortcut to the same script,
+optional and independent; deleting it does not uninstall anything.
+
 The desktop directory name is localised (`Desktop`, `Escritorio`, `Bureau`,
 and others). It must be resolved at runtime rather than hardcoded:
 
@@ -86,6 +90,11 @@ an image file is also accepted.
 **`Categories` accepts exactly one primary category.** Supplying more than one
 (for example `Development;Utility;`) causes the application to appear multiple
 times in the menu.
+
+**`StartupWMClass` associates open windows with the entry.** It is unnecessary
+while the script only shows its own dialogs. When the script opens a window of
+another program, the window is attributed to that program unless this key
+matches the window's class. See section 6.
 
 **Validate before assuming correctness:**
 
@@ -132,14 +141,16 @@ update-desktop-database ~/.local/share/applications
 The application should now appear in the activities overview.
 
 **Step 6 — Pin to the dock (optional).** Either right-click the icon in the
-overview and select "Add to Favourites", or append it to the existing list:
+overview and select "Pin to Dash", or append it to the existing list. Pinning
+works from the overview whether or not the application is running:
 
 ```bash
 gsettings get org.gnome.shell favorite-apps
 gsettings set org.gnome.shell favorite-apps "['...existing entries...', 'myapp.desktop']"
 ```
 
-**Step 7 — Place an icon on the desktop (optional).**
+**Step 7 — Place a shortcut on the desktop (optional).** This copies the
+entry; the application from step 5 is unaffected and remains the one to pin.
 
 ```bash
 cp ~/.local/share/applications/myapp.desktop "$(xdg-user-dir DESKTOP)/"
@@ -315,6 +326,31 @@ do not accumulate files:
 LOG=$(mktemp)
 trap 'rm -f "$LOG"' EXIT
 ```
+
+### Windows of another program appear under that program's icon
+
+GNOME attributes an open window to an application by comparing the window's
+class (`WM_CLASS` on X11, `app_id` on Wayland) with the `StartupWMClass` key,
+or with the `.desktop` file name. When the script opens a window that belongs
+to another program (a browser in app mode, an editor, a viewer), the class is
+that program's. The dock then shows a second icon, or groups the window under
+the other program, and "Pin to Dash" on the running window pins the wrong
+application.
+
+The fix is to set `StartupWMClass` to the class the window actually reports.
+It is not always the obvious value. Google Chrome launched with
+`--app=http://localhost:<port>` under Wayland reports
+`chrome-localhost__-Default`: the host without the port, the path with `/`
+replaced, and the profile directory name. Its `--class` flag does not change
+that `app_id`.
+
+```ini
+StartupWMClass=chrome-localhost__-Default
+```
+
+To read a window's class, open Looking Glass (<kbd>Alt</kbd>+<kbd>F2</kbd>,
+`lg`) and check the Windows tab. `xprop` does not see native Wayland windows,
+and GNOME's introspection D-Bus API refuses callers by default.
 
 ### pgrep -f matches the querying command
 
